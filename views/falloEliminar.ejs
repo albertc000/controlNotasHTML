@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumno No Eliminado</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Proceso Fallido</h1>
+        <p>El estudiante no ha sido eliminado d la base de datos debido a que ya no existe un estudiante con la cedula ingresada</p>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>Resumen de Datos</h2>
+            <ul>
+                <li><strong>Cédula:</strong> <%= ci %></li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>¿Qué deseas hacer ahora?</h2>
+            <ul>
+                <li><a href="/nuevo-alumno">➕ Registrar otro alumno</a></li>
+                <li><a href="/modificar-alumno">➕ Modificar otro alumno</a></li>
+                <li><a href="/eliminar-alumno">➕ Eliminar otro alumno</a></li>
+                <li><a href="/">🏠 Volver al inicio</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Programación II · Trayecto II · UPTT</p>
+    </footer>
+</body>
+</html>
