@@ -4,36 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alumno Procesado</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <header>
-        <h1>✅ Proceso Exitoso</h1>
-        <p>El estudiante ha sido guardado en la base de datos (bd.json)</p>
+    <header class="navbar" role="banner">
+        <div class="navbar__container">
+            <a href="#" class="navbar__brand">Control de Notas</a>
+            
+            <nav id="navbarMenu" class="navbar__menu" role="navigation" aria-labelledby="navbarToggle">
+                <ul class="navbar__list">
+                    <li class="navbar__item"><a href="#" onclick="return confirm('¿Estás seguro de que deseas salir?')" class="navbar__link">Salir</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <main>
-        <section class="card">
+    <div class="registration-form-container">
+        <div class="registration-form-header">
+            <h2>Proceso Exitoso</h2>
+            <p>Su acción se realizó con exito</p>
+            <br>
             <h2>Resumen de Datos</h2>
-            <ul>
-                <li><strong>Cédula:</strong> <%= ci %></li>
-                <li><strong>Nombre:</strong> <%= nombre %></li>
-                <li><strong>Apellido:</strong> <%= apellido %></li>
-            </ul>
-        </section>
+            <p><%= exito %></p>
+        </div>
 
-        <section class="card">
-            <h2>¿Qué deseas hacer ahora?</h2>
-            <ul>
-                <li><a href="/nuevo-alumno">➕ Registrar otro alumno</a></li>
-                <li><a href="/modificar-alumno">➕ Modificar otro alumno</a></li>
-                <li><a href="/">🏠 Volver al inicio</a></li>
-            </ul>
-        </section>
-    </main>
+    </div>
+        
+    <div class="solid-container-1">
+        <a href="/registro"><button type="button" class="solid-btn-1">Registrar Estudiante</button></a>
+        <a href="/lista"><button type="button" class="solid-btn-1">Lista de Estudiantes</button></a>
+    </div>
+    <div class="solid-container-1">
+        <a href="/"><button type="button" class="solid-btn-1">Volver a Inicio</button></a>
+    </div>
 
-    <footer>
-        <p>Programación II · Trayecto II · UPTT</p>
-    </footer>
 </body>
 </html>

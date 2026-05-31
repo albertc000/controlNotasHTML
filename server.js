@@ -1,154 +1,237 @@
 // 1. Importar el framework Express
+const { error } = require('console');
 const express = require('express');
-const fs = require("fs")
+const fs = require("fs");
+const { type } = require('os');
+
+class Alumno {
+    ci;
+    nombre;
+    apellido;
+    nota1;
+    nota2;
+    nota3;
+    nota4;
+
+    constructor(ci, nombre, apellido, nota1, nota2, nota3, nota4){
+        this.ci = ci;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.nota1 = nota1;
+        this.nota2 = nota2;
+        this.nota3 = nota3;
+        this.nota4 = nota4;
+    }
+}
+
+class Estudiantes {
+    
+    listaEstudiantes = [];
+    JsonName = "";
+
+    constructor(JsonName){
+        this.JsonName = JsonName;
+        if (fs.existsSync(JsonName)) {
+            const dataBase = fs.readFileSync(JsonName, "utf8");
+            const data = JSON.parse(dataBase).listaEstudiantes;
+            this.listaEstudiantes = data.map(a => new Alumno(a.ci, a.nombre, a.apellido, a.nota1, a.nota2, a.nota3, a.nota4));
+        }else{
+            const dataBase = JSON.stringify({listaEstudiantes: []}, null, 2);
+            fs.writeFileSync(JsonName, dataBase);
+        }
+    }
+
+
+    existeAlumno(ci){
+    return this.listaEstudiantes.some(alumno => alumno.ci == ci)
+    }
+
+    buscarAlumno(ci){
+    return this.listaEstudiantes.find(alumno => alumno.ci == ci);
+    }
+
+    eliminarAlumno(ci)
+    {
+        let alumno = this.listaEstudiantes.findIndex(alumno=>alumno.ci===ci);
+        if (alumno !== -1) {
+            this.listaEstudiantes.splice(alumno, 1);
+        }
+    }
+
+    registrarAlumno(ci, nombre, apellido){
+        const nuevoAlumno = new Alumno(ci, nombre, apellido, 0, 0, 0, 0);
+        this.listaEstudiantes.push(nuevoAlumno);
+    }
+
+    cerrarBD(){
+        //guarda los datos de listaEstudiantes en esta clase al JSON
+        const dataBase = JSON.stringify({listaEstudiantes: this.listaEstudiantes }, null, 2);
+        fs.writeFileSync(this.JsonName, dataBase);
+    }
+
+}
 
 function leerbd() {
     let textJson = fs.readFileSync("bd.json", "utf8")
     estudiantes = JSON.parse(textJson).estudiantes
     return estudiantes
 }
-function guardarbd() {
-    let obj = JSON.stringify({ estudiantes: estudiantes, }, null, 2)
-    fs.writeFileSync("bd.json", obj)
-}
-
-function existeAlumno(ci){
-    return estudiantes.some(alumno => alumno.ci == ci)
-}
-
-function buscarAlumno(ci){
-    return estudiantes.find(alumno => alumno.ci == ci);
-}
-
-function eliminarAlumno(ci)
-    {
-        let alumno = estudiantes.findIndex(alumno=>alumno.ci===ci);
-        if (alumno !== -1) {
-            estudiantes.splice(alumno, 1);
-        }
-    }
 
 // 2. Instanciar la aplicación (Crear el servidor)
 const app = express();
-let estudiantes = [
 
-]
 // 3. Configurar Middleware para servir archivos estáticos (Fase 1 de la arquitectura)
 // Esto le dice al servidor: "Si alguien pide un archivo HTML o CSS, búscalo en la carpeta 'public'"
 app.use(express.static('public'));
 
 // Middleware para leer los datos que vienen de un formulario HTML (req.body)
 app.use(express.urlencoded({ extended: true }));
-// 4. Crear una Ruta Básica (Método GET)
 
-// 5. Ejemplo de SSR Profesional usando un Motor de Plantillas (EJS)
 // Pre-configuración necesaria:
 app.set('view engine', 'ejs');
 
 // --- NUEVO: FORMULARIO ---
 
 // 1. Ruta para MOSTRAR el formulario HTML
-app.get('/nuevo-alumno', (req, res) => {
-    res.render('formulario');
+app.get('/registro', (req, res) => {
+    res.render('formNuevo');
 });
 
 // 2. Ruta (Endpoint POST) para RECIBIR y guardar los datos
-app.post('/guardar-alumno', (req, res) => {
-    leerbd(); // Leemos la base de datos actual
+app.post('/guardarAlumno', (req, res) => {
+    let BDEstudiantes = new Estudiantes("bd.json");
     
-    // Extraemos los datos que el usuario escribió en el formulario
-    let ci = Number(req.body.ci);
-    let nombre = req.body.nombre;
-    let apellido = req.body.apellido;
-    let nota1 = 0;
-    let nota2 = 0;
-    let nota3 = 0;
-    let nota4 = 0;
-    
-    if(existeAlumno(ci)){
-        res.render('falloRegistro',  { ci: ci, nombre: nombre, apellido:apellido });
+    let ci = req.body.ci;
+
+    if(!ci || isNaN(Number(ci))){
+        res.render('falloRegistro',  { ci: ci, nombre: "nombre", apellido: "apellido" });
     }
     else{
-    // Guardamos en el arreglo y luego en el archivo JSON
-    estudiantes.push({ ci: ci, nombre: nombre, apellido:apellido, nota1:nota1, nota2:nota2, nota3:nota3, nota4:nota4 });
-    guardarbd();
-    
-    // Renderizamos la nueva vista de éxito
-    res.render('exito', { ci: ci, nombre: nombre, apellido:apellido });
+        ci = Number(ci);
+        let nombre = req.body.nombre;
+        let apellido = req.body.apellido;
+        let nota1 = 0;
+        let nota2 = 0;
+        let nota3 = 0;
+        let nota4 = 0; 
+        
+        if(BDEstudiantes.existeAlumno(ci)){
+            res.render('fallo',  { error: "El Estudiante ya Existe en la Base de Datos" });
+        }
+        else{
+            if (String(ci).length <= 9 && String(ci).length >= 7){
+                BDEstudiantes.registrarAlumno(ci, nombre, apellido);
+                res.render('exito', { exito: "Éxto al Registrar el Estudiante" });
+            }
+            else{
+                res.render('fallo',  { error: "Cedúla Ingresada Inválida" });
+            }
+        }
     }
-});
-
-app.get('/modificar-alumno', (req, res) => {
-    res.render('formularioModificar');
-});
-
-app.post('/cambiar-alumno', (req, res) => {
-    leerbd(); // Leemos la base de datos actual
     
-    // Extraemos los datos que el usuario escribió en el formulario
-    let ci = Number(req.body.ci);
-    let nombre = req.body.nombre;
-    let apellido = req.body.apellido;
-    let nota1 = Number(req.body.nota1);
-    let nota2 = Number(req.body.nota2);
-    let nota3 = Number(req.body.nota3);
-    let nota4 = Number(req.body.nota4);
-    
-    if(!existeAlumno(ci)){
-        res.render('falloModificar',  { ci: ci, nombre: nombre, apellido:apellido });
-    }
-    else{
-    let alumno = buscarAlumno(ci);
-    // Guardamos en el arreglo y luego en el archivo JSON
-    alumno.ci = ci;
-    alumno.nombre = nombre;
-    alumno.apellido = apellido;
-    alumno.nota1 = nota1;
-    alumno.nota2 = nota2;
-    alumno.nota3 = nota3
-    alumno.nota4 = nota4;
-    guardarbd();
-    
-    // Renderizamos la nueva vista de éxito
-    res.render('exito', { ci: ci, nombre: nombre, apellido:apellido });
-    }
+    BDEstudiantes.cerrarBD();
 });
 
-app.get('/eliminar-alumno', (req, res) => {
-    res.render('formularioEliminar');
+app.get('/busqueda', (req, res) => {
+    res.render('formBusqueda');
 });
 
-app.get('/modificar-alumno', (req, res) => {
-    res.render('formularioModificar');
-});
-
-app.post('/borrar-alumno', (req, res) => {
-    leerbd(); // Leemos la base de datos actual
+app.post('/busquedaAlumno', (req, res) => {
+    let BDEstudiantes = new Estudiantes("bd.json");
     
-    // Extraemos los datos que el usuario escribió en el formulario
-    let ci = Number(req.body.ci);
+    let ci = req.body.ci;
 
-    if(!existeAlumno(ci)){
-        res.render('falloEliminar',  { ci: ci});
+    if(!ci || isNaN(Number(ci))){
+        res.render('fallo',  { error: "Cédula Ingresada Inválida" });
     }
     else{
-    let alumno = buscarAlumno(ci);
-    // Guardamos en el arreglo y luego en el archivo JSON
-    let cedula = alumno.ci;
-    let nombre = alumno.nombre;
-    let apellido= alumno.apellido;
+        if(!BDEstudiantes.existeAlumno(ci)){
+            res.render('fallo',  { error: "El Estudiante no Existe en la Base de Datos" });
+        }
+        else{
+            let i = BDEstudiantes.buscarAlumno(ci);
 
-    eliminarAlumno(ci);
-    guardarbd();
-    
-    // Renderizamos la nueva vista de éxito
-    res.render('exitoEliminar', { ci: ci, nombre: nombre, apellido:apellido });
+            let nombre = i.nombre;
+            let apellido = i.apellido;
+            let nota1 = i.nota1;
+            let nota2 = i.nota2;
+            let nota3 = i.nota3;
+            let nota4 = i.nota4;
+        
+            res.render('formModificar', { ci:ci, nombre: nombre, apellido: apellido, nota1: nota1, nota2: nota2, nota3: nota3, nota4: nota4})
+        }
+
     }
 });
 
-app.get('/lista-alumnos', (req, res) => {
-    let alumnos = leerbd();
-    res.render('listaGeneral', { estudiantes: alumnos });
+app.post('/procesarAlumno', (req, res) => {
+    let BDEstudiantes = new Estudiantes("bd.json");
+
+    const accion = req.body.accion;
+    let ci = req.body.ci
+    if(!ci || isNaN(Number(ci))){
+        res.render('fallo',  { error: "Cédula Ingresada Inválida" });
+    }
+    else if(!BDEstudiantes.existeAlumno(ci)){
+            res.render('fallo',  { error: "El Estudiante no Existe en la Base de Datos" });
+        }
+    else{
+        if (accion === 'eliminar'){
+            BDEstudiantes.eliminarAlumno(ci);
+            res.render('exito', { exito: "Éxto al Eliminar el Estudiante" });
+        }
+        else{
+            let i = BDEstudiantes.buscarAlumno(ci);
+
+            let nombre = req.body.nombre;
+            let apellido = req.body.apellido;
+            let nota1 = req.body.nota1;
+            let nota2 = req.body.nota2;
+            let nota3 = req.body.nota3;
+            let nota4 = req.body.nota4; 
+
+            if(!nota1 || isNaN(Number(nota1)) || !nota2 || isNaN(Number(nota2)) || !nota3 || isNaN(Number(nota3)) || !nota3 || isNaN(Number(nota3))){
+                res.render('fallo',  { error: "Nota Ingresada Invalida" });
+            }
+            else{
+                nota1 = Number(nota1);
+                nota2 = Number(nota2);
+                nota3 = Number(nota3);
+                nota4 = Number(nota4);
+
+                if(String(nota1).length <= 20 && String(nota1).length >= 0 || String(nota2).length <= 20 && String(nota2).length >= 0 || String(nota3).length <= 20 && String(nota3).length >= 0 || String(nota4).length <= 20 && String(nota4).length >= 0){
+                        i.ci = ci;
+                        i.nombre = nombre;
+                        i.apellido = apellido;
+                        i.nota1 = nota1;
+                        i.nota2 = nota2;
+                        i.nota3 = nota3
+                        i.nota4 = nota4;
+
+                        res.render('exito', { exito: "Éxto al Actualizar el Estudiante" });
+                }
+                else{
+                    res.render('fallo',  { error: "Nota Ingresada Invalida" });
+                }
+            }
+        }
+    }
+
+    BDEstudiantes.cerrarBD();
+});
+
+app.get('/lista', (req, res) => {
+    let BDEstudiantes = new Estudiantes("bd.json");
+    res.render('listaEstudiantes', { estudiantes: BDEstudiantes.listaEstudiantes, BDEstudiantes: BDEstudiantes });
+});
+
+app.post('/eliminarAlumno', (req, res) => {
+    let BDEstudiantes = new Estudiantes("bd.json");
+    let ci = req.body.ci;
+    
+    BDEstudiantes.eliminarAlumno(ci);
+    BDEstudiantes.cerrarBD();
+    res.render('exito', { exito: "Alumno eliminado correctamente" });
 });
 
 // 6. Encender el servidor y ponerlo a escuchar en un puerto de red

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Notas</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Registrar Alumno</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
     <header class="navbar" role="banner">
         <div class="navbar__container">
             <a href="#" class="navbar__brand">Control de Notas</a>
@@ -19,12 +18,25 @@
             </nav>
         </div>
     </header>
+
+    <div class="registration-form-container">
+        <div class="registration-form-header">
+            <h2>Proceso Fallido</h2>
+            <p>Ha ocurrido un error con su acción</p>
+            <br>
+            <h2>Resumen de Datos</h2>
+            <p><%= error %></p>
+        </div>
+
+    </div>
+        
     <div class="solid-container-1">
         <a href="/registro"><button type="button" class="solid-btn-1">Registrar Estudiante</button></a>
-        <a href="/busqueda"><button type="button" class="solid-btn-1">Buscar Estudiante</button></a>
         <a href="/lista"><button type="button" class="solid-btn-1">Lista de Estudiantes</button></a>
     </div>
-
+    <div class="solid-container-1">
+        <a href="/"><button type="button" class="solid-btn-1">Volver a Inicio</button></a>
+    </div>
 
 </body>
 </html>

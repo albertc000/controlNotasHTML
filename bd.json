@@ -1,94 +1,40 @@
 {
-  "estudiantes": [
+  "listaEstudiantes": [
     {
-      "ci": 244,
-      "nombre": "luis",
-      "apellido": "perz",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
+      "ci": "12445545",
+      "nombre": "asfasf",
+      "apellido": "afafaf",
+      "nota1": 4,
+      "nota2": 10,
+      "nota3": 4,
+      "nota4": 4
     },
     {
-      "ci": 23781625,
-      "nombre": "asdsda",
-      "apellido": "perz",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
+      "ci": "9999999",
+      "nombre": "asas",
+      "apellido": "asasas",
+      "nota1": 10,
+      "nota2": 15,
+      "nota3": 16,
+      "nota4": 17
     },
     {
-      "ci": 24234,
-      "nombre": "sdfsdf",
-      "apellido": "perz",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
+      "ci": "9999998",
+      "nombre": "asas",
+      "apellido": "asasa",
+      "nota1": 15,
+      "nota2": 13,
+      "nota3": 10,
+      "nota4": 20
     },
     {
-      "ci": 123,
-      "nombre": "juan perez",
-      "apellido": "perz",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
-    },
-    {
-      "ci": 1234,
-      "nombre": "lui",
-      "apellido": "perz",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
-    },
-    {
-      "ci": 5464,
-      "nombre": "juan",
-      "apellido": "perz",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
-    },
-    {
-      "ci": 12231465,
-      "nombre": "juan",
-      "apellido": "jaun",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
-    },
-    {
-      "ci": 6474,
-      "nombre": "fasfa",
-      "apellido": "fafafa",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
-    },
-    {
-      "ci": 98717041,
-      "nombre": "kajaja",
-      "apellido": "kaskdajd",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
-    },
-    {
-      "ci": 838258,
-      "nombre": "a99unkn",
-      "apellido": "nkadfnka",
-      "nota1": 0,
-      "nota2": 0,
-      "nota3": 0,
-      "nota4": 0
+      "ci": "1234567",
+      "nombre": "albert",
+      "apellido": "campos",
+      "nota1": 20,
+      "nota2": 15,
+      "nota3": 18,
+      "nota4": 19
     }
   ]
 }

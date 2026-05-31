@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Estudiante</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header class="navbar" role="banner">
+        <div class="navbar__container">
+            <a href="#" class="navbar__brand">Control de Notas</a>
+            
+            <nav id="navbarMenu" class="navbar__menu" role="navigation" aria-labelledby="navbarToggle">
+                <ul class="navbar__list">
+                    <li class="navbar__item"><a href="#" onclick="return confirm('¿Estás seguro de que deseas salir?')" class="navbar__link">Salir</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <table class="actions-table" id="myActionsTable">
+        <thead>
+            <tr>
+                <th scope="col">Cédula</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido</th>
+                <th scope="col">Primera Nota</th>
+                <th scope="col">Segunda Nota</th>
+                <th scope="col">Tercera Nota</th>
+                <th scope="col">Cuarta Nota</th>
+                <th scope="col">Promedio</th>
+                <th scope="col" class="cell-actions">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% estudiantes.forEach(alumno => { %>
+                <tr data-id="<%= alumno.ci %>">
+                <td><%= alumno.ci %></td>
+                <td><%= alumno.nombre %></td>
+                <td><%= alumno.apellido %></td>
+                <td><%= alumno.nota1 %></td>
+                <td><%= alumno.nota2 %></td>
+                <td><%= alumno.nota3 %></td>
+                <td><%= alumno.nota4 %></td>
+                <% let promedio = ((alumno.nota1 + alumno.nota2 + alumno.nota3 + alumno.nota4) / 4) %>
+                <td class="<%= promedio >= 10 ? 'aprobado' : 'reprobado' %>">
+                    <%= promedio.toFixed(2) %>
+                </td>
+                <td class="cell-actions">
+                    <div class="actions-container">
+                        <form action="/busquedaAlumno" method="POST">
+                            <input type="hidden" name="ci" value="<%= alumno.ci %>">
+                            <button class="action-button btn-edit" id="lapiz" type="submit" title="Editar">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"></path></svg>
+                            </button>
+                        </form>
+                        <form action="/eliminarAlumno" method="POST" onsubmit="return confirm('¿Eliminar a <%= alumno.nombre %>?')">
+                            <input type="hidden" name="ci" value="<%= alumno.ci %>">
+                            <button class="action-button btn-delete" id="borrador" type="submit" title="Eliminar">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+                            </button>
+                        </form>
+                    </div>
+
+                </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <div class="solid-container-1">
+        <a href="/registro"><button type="button" class="solid-btn-1">Registrar Estudiante</button></a>
+        <a href="/busqueda"><button type="button" class="solid-btn-1">Buscar Estudiante</button></a>
+    </div>
+        <div class="solid-container-1">
+        <a href="/"><button type="button" class="solid-btn-1">Volver a Inicio</button></a>
+    </div>
+</body>
+</html>
