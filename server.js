@@ -231,7 +231,7 @@ app.post('/eliminarAlumno', (req, res) => {
     
     BDEstudiantes.eliminarAlumno(ci);
     BDEstudiantes.cerrarBD();
-    res.render('exito', { exito: "Alumno eliminado correctamente" });
+    res.redirect('/lista');
 });
 
 // 6. Encender el servidor y ponerlo a escuchar en un puerto de red
