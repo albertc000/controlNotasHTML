@@ -1,5 +1,8 @@
-adaptacion sencilla del sistema de control de notas a un servidor con express
-albert campos
-yeferson zambrano
-carlos viloria
-wilver guerrero
+# Sistema de Control de Notas en un Servidor con Express
+## Integrantes
+###
+- albert campos
+- yeferson zambrano
+- carlos viloria
+- wilver guerrero
+- sandro montilla
