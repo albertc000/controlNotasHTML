@@ -3,6 +3,7 @@ const { error } = require('console');
 const express = require('express');
 const fs = require("fs");
 const { type } = require('os');
+const methodOverride = require('method-override');
 
 class Alumno {
     ci;
@@ -71,12 +72,6 @@ class Estudiantes {
 
 }
 
-function leerbd() {
-    let textJson = fs.readFileSync("bd.json", "utf8")
-    estudiantes = JSON.parse(textJson).estudiantes
-    return estudiantes
-}
-
 // 2. Instanciar la aplicación (Crear el servidor)
 const app = express();
 
@@ -85,7 +80,9 @@ const app = express();
 app.use(express.static('public'));
 
 // Middleware para leer los datos que vienen de un formulario HTML (req.body)
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 
 // Pre-configuración necesaria:
 app.set('view engine', 'ejs');
@@ -132,9 +129,6 @@ app.post('/guardarAlumno', (req, res) => {
     BDEstudiantes.cerrarBD();
 });
 
-app.get('/busqueda', (req, res) => {
-    res.render('formBusqueda');
-});
 
 app.post('/busquedaAlumno', (req, res) => {
     let BDEstudiantes = new Estudiantes("bd.json");
@@ -164,11 +158,54 @@ app.post('/busquedaAlumno', (req, res) => {
     }
 });
 
-app.post('/procesarAlumno', (req, res) => {
+app.put('/procesarAlumno', (req, res) => {
+    let BDEstudiantes = new Estudiantes("bd.json");
+    
+    let ci = req.body.ci;
+    let i = BDEstudiantes.buscarAlumno(ci);
+
+    let nombre = req.body.nombre;
+    let apellido = req.body.apellido;
+    let nota1 = req.body.nota1;
+    let nota2 = req.body.nota2;
+    let nota3 = req.body.nota3;
+    let nota4 = req.body.nota4; 
+
+    if(!nota1 || isNaN(Number(nota1)) || !nota2 || isNaN(Number(nota2)) || !nota3 || isNaN(Number(nota3)) || !nota3 || isNaN(Number(nota3))){
+        res.render('fallo',  { error: "Nota Ingresada Invalida" });
+    }
+    else{
+        nota1 = Number(nota1);
+        nota2 = Number(nota2);
+        nota3 = Number(nota3);
+        nota4 = Number(nota4);
+
+        if(String(nota1).length <= 20 && String(nota1).length >= 0 || String(nota2).length <= 20 && String(nota2).length >= 0 || String(nota3).length <= 20 && String(nota3).length >= 0 || String(nota4).length <= 20 && String(nota4).length >= 0){
+                i.ci = ci;
+                i.nombre = nombre;
+                i.apellido = apellido;
+                i.nota1 = nota1;
+                i.nota2 = nota2;
+                i.nota3 = nota3
+                i.nota4 = nota4;
+
+                BDEstudiantes.cerrarBD();
+                res.render('exito', { exito: "Éxto al Actualizar el Estudiante" });
+        }
+        else{
+            BDEstudiantes.cerrarBD();
+            res.render('fallo',  { error: "Nota Ingresada Invalida" });
+        }
+    }
+    BDEstudiantes.cerrarBD();
+});
+
+app.delete('/procesarAlumno', (req, res) => {
     let BDEstudiantes = new Estudiantes("bd.json");
 
     const accion = req.body.accion;
     let ci = req.body.ci
+    //console.log(ci)
     if(!ci || isNaN(Number(ci))){
         res.render('fallo',  { error: "Cédula Ingresada Inválida" });
     }
@@ -176,66 +213,34 @@ app.post('/procesarAlumno', (req, res) => {
             res.render('fallo',  { error: "El Estudiante no Existe en la Base de Datos" });
         }
     else{
-        if (accion === 'eliminar'){
+            ci = Number(ci);
             BDEstudiantes.eliminarAlumno(ci);
+            BDEstudiantes.cerrarBD();
             res.render('exito', { exito: "Éxto al Eliminar el Estudiante" });
-        }
-        else{
-            let i = BDEstudiantes.buscarAlumno(ci);
-
-            let nombre = req.body.nombre;
-            let apellido = req.body.apellido;
-            let nota1 = req.body.nota1;
-            let nota2 = req.body.nota2;
-            let nota3 = req.body.nota3;
-            let nota4 = req.body.nota4; 
-
-            if(!nota1 || isNaN(Number(nota1)) || !nota2 || isNaN(Number(nota2)) || !nota3 || isNaN(Number(nota3)) || !nota3 || isNaN(Number(nota3))){
-                res.render('fallo',  { error: "Nota Ingresada Invalida" });
-            }
-            else{
-                nota1 = Number(nota1);
-                nota2 = Number(nota2);
-                nota3 = Number(nota3);
-                nota4 = Number(nota4);
-
-                if(String(nota1).length <= 20 && String(nota1).length >= 0 || String(nota2).length <= 20 && String(nota2).length >= 0 || String(nota3).length <= 20 && String(nota3).length >= 0 || String(nota4).length <= 20 && String(nota4).length >= 0){
-                        i.ci = ci;
-                        i.nombre = nombre;
-                        i.apellido = apellido;
-                        i.nota1 = nota1;
-                        i.nota2 = nota2;
-                        i.nota3 = nota3
-                        i.nota4 = nota4;
-
-                        res.render('exito', { exito: "Éxto al Actualizar el Estudiante" });
-                }
-                else{
-                    res.render('fallo',  { error: "Nota Ingresada Invalida" });
-                }
-            }
-        }
     }
-
     BDEstudiantes.cerrarBD();
 });
 
 app.get('/lista', (req, res) => {
-    let BDEstudiantes = new Estudiantes("bd.json");
-    res.render('listaEstudiantes', { estudiantes: BDEstudiantes.listaEstudiantes, BDEstudiantes: BDEstudiantes });
+    res.render('listaEstudiantes'); 
 });
 
-app.post('/eliminarAlumno', (req, res) => {
+app.get('/api/estudiantes', (req, res) => {
     let BDEstudiantes = new Estudiantes("bd.json");
-    let ci = req.body.ci;
-    
+    res.json(BDEstudiantes.listaEstudiantes);
+});
+
+app.delete('/eliminarAlumno', (req, res) => {
+    let BDEstudiantes = new Estudiantes("bd.json");
+    let ci = Number(req.body.ci);
     BDEstudiantes.eliminarAlumno(ci);
     BDEstudiantes.cerrarBD();
-    res.redirect('/lista');
+    
+    res.json({ ok: true, mensaje: "Alumno eliminado" });
 });
 
 // 6. Encender el servidor y ponerlo a escuchar en un puerto de red
 const PUERTO = 3000;
 app.listen(PUERTO, () => {
-    console.log(`Servidor de la UPTT corriendo en http://localhost:${PUERTO}`);
+    console.log(`Servidor corriendo en http://localhost:${PUERTO}`);
 });
